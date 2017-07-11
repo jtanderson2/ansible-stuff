@@ -1,0 +1,15 @@
+---
+#
+# Default username and password
+ansible_user:       cisco
+ansible_ssh_pass:   cisco
+
+# Global configuration variables
+domain_name:        c3j.lab
+ntp_server_1:       1.1.1.1
+ntp_server_2:       2.2.2.2
+snmp_community      c3jcom
+
+# Compiled configs directory
+build_dir:          configs
+

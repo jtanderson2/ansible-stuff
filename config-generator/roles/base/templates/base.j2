@@ -1,0 +1,65 @@
+service timestamps debug datetime msec
+service timestamps log datetime msec
+no service password-encryption
+!
+hostname {{inventory_hostname}}
+!
+boot-start-marker
+boot-end-marker
+!
+logging buffered 4096
+!
+enable password cisco
+!
+aaa new-model
+!
+!
+aaa authentication login default local
+aaa authorization exec default local
+!
+!
+no ip source-route
+ip cef
+no ip domain-lookup
+ip domain-name {{ domain_name }}
+!
+!
+username {{ansible_user}} privilege 15 password 0 {{ansible_ssh_pass}}
+!
+!
+!
+!
+!
+!
+!
+!
+interface {{ WAN.interface }}
+ decription WAN
+ ip address {{ WAN.ip }} {{ WAN.mask }}
+!
+interface {{ LAN.interface }}
+ decription LAN
+ ip address {{ LAN.ip }} {{ LAN.mask }}
+!
+!
+no ip http server
+no ip http secure-server
+!
+!
+ip route 0.0.0.0 0.0.0.0 {{ default_route }}
+!
+!
+snmp-server community {{ snmp_community }} RO
+!
+!
+archive
+ log config
+  hidekeys
+!
+!
+line vty 0 4
+ transport input ssh
+!
+ntp server {{ ntp_server_a }} prefer
+ntp server {{ ntp_server_b }}
+!

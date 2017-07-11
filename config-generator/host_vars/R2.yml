@@ -1,0 +1,13 @@
+---
+
+WAN:
+  interface: 'GigabitEthernet0/0'
+  ip: 172.31.1.2
+  mask: 255.255.255.0
+
+LAN:
+  interface: 'GigabitEthernet0/1'
+  ip: 192.168.1.2
+  mask: 255.255.255.0
+
+default_route: 172.31.1.254
