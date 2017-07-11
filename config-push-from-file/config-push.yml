@@ -1,0 +1,17 @@
+---
+
+  - hosts: ios
+    gather_facts: false
+    connection: local
+    
+    vars:
+      ios_provider:
+        username: "{{ un }}"
+        password: "{{ pwd }}"
+        host: "{{ inventory_hostname }}"
+    
+    tasks:
+     - name: OSPF CONFIG FROM FILE
+       ios_config:
+         src: "./ospf.cfg"
+         provider: "{{ ios_provider }}"

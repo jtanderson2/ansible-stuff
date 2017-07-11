@@ -1,0 +1,7 @@
+[all:vars]
+un=cisco
+pwd=cisco
+
+[ios]
+r1
+r2
