@@ -1,0 +1,4 @@
+---
+- name: BASE CONFIGURATION
+  template: src=base.j2 dest={{ build_dir }}/{{inventory_hostname}}/base.conf
+  check_mode: no
