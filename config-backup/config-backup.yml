@@ -1,0 +1,24 @@
+---
+
+  - hosts: ios
+    gather_facts: false
+    connection: local
+    
+    vars:
+      ios_provider:
+        username: "{{ un }}"
+        password: "{{ pwd }}"
+        host: "{{ inventory_hostname }}"
+    
+    tasks:
+     - name: BACKUP CONFIG
+       ios_command:
+         commands:
+           - show run
+         provider: "{{ ios_provider }}"
+       register: config
+
+     - name: save output to /etc/ansible/backups 
+       copy: 
+         content: "{{ config.stdout[0] }}"
+         dest: "./backups/config_{{ inventory_hostname }}.txt"
