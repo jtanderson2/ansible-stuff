@@ -1,0 +1,67 @@
+---
+
+  - hosts: bigip
+    gather_facts: false
+    connection: local
+    environment:
+      F5_SERVER:            adc1.c3j.lab
+      F5_USER:              admin
+      F5_PASSWORD:          password
+      F5_VALIDATE_CERTS:    false
+ 
+    tasks:
+
+     - include_vars:
+         file: "service.yml"
+    
+     - name: CREATE NODES
+       bigip_node:
+         host: "{{ item.value.ip }}"
+         name: "{{ item.key }}"
+         description: "{{ item.value.desc }}"
+         state: present
+       with_dict: "{{ nd }}"
+       delegate_to: localhost  
+
+     - name: CREATE POOL
+       bigip_pool:
+         name: "{{ pl.name }}"
+         description: "{{ pl.desc }}"
+         lb_method: "{{ pl.method }}"
+         monitors: "{{ pl.mon }}"
+         state: present
+       delegate_to: localhost
+
+     - name: ADD NODES TO POOL
+       bigip_pool_member:
+         pool: "{{ pl.name }}"
+         host: "{{ item.key }}"
+         port: "{{ pl.port }}"
+         state: present
+       with_dict: "{{ nd }}"
+       delegate_to: localhost
+
+     - name: CREATE VIRTUAL SERVER
+       bigip_virtual_server:
+         name: "{{ vs.name }}"
+         description: "{{ vs.desc }}"
+         destination: "{{ vs.destination }}"
+         port: "{{ vs.port }}"
+         pool: "{{ pl.name }}"
+         route_advertisement_state: "{{ vs.advertise }}"
+         state: present
+       delegate_to: localhost
+  
+     - name: VERIFICATION
+       bigip_facts:
+         include: "virtual_server,pool,node"
+       delegate_to: localhost
+ 
+     - debug:
+         msg: "Pool {{ pl.name }} reports {{ pool['/Common/' + pl.name]['object_status'].availability_status }}"
+         
+     - debug:
+         msg: "Virtual Server {{ vs.name }} reports {{ virtual_server['/Common/' + vs.name]['object_status'].availability_status }}"
+
+
+
