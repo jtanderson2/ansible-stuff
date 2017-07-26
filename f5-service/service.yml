@@ -1,0 +1,22 @@
+---
+
+nd:
+  green22: { ip: 10.128.2.22, desc: WebServer }
+  blue33: { ip: 10.128.2.33, desc: WebServer }
+
+
+pl:
+  name: webpool1 
+  desc: Web Service Pool
+  method: least_connection_member
+  port: 80
+  mon: '/Common/http'
+
+vs:
+  name: webvs1
+  desc: Web Service Virtual Server
+  destination: 10.128.1.100
+  port: 80
+  advertise: enabled
+  
+   

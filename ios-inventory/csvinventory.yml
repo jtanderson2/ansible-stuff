@@ -1,0 +1,34 @@
+---
+
+  - name: PREPARE ENVIRONMENT
+    hosts: localhost
+
+    tasks:
+      - name: CREATE BLANK INVENTORY FILE
+        template:
+          src: csvtemplate.j2
+          dest: ./output/inventory.csv
+
+  - name: POPULATE INVENTORY FILE
+    hosts: ios
+    serial: 1
+
+    vars:
+      ios_provider:
+        username: "{{ un }}"
+        password: "{{ pwd }}"
+        host: "{{ inventory_hostname }}"
+
+    tasks:
+      - name: GET FACTS FROM DEVICES
+        ios_facts:
+          provider: "{{ ios_provider }}"
+        register: stuff
+
+      - name: ADD FACTS TO INVENTORY FILE
+        lineinfile:
+          dest: ./output/inventory.csv
+          insertafter: EOF
+          line: "{{ ansible_net_hostname }},{{ ansible_net_model }},{{ ansible_host }},{{ ansible_net_version }},{{ ansible_net_image }},{{ ansible_net_serialnum }}"
+
+
